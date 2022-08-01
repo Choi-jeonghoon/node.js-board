@@ -1,0 +1,31 @@
+{
+  "name": "jh_board",
+  "version": "1.0.0",
+  "description": "Create a bulletin board for corporate assignments",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Choi-jeonghoon/JH_board.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Choi-jeonghoon/JH_board/issues"
+  },
+  "homepage": "https://github.com/Choi-jeonghoon/JH_board#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.1"
+  },
+  "devDependencies": {
+    "@prisma/client": "^4.1.1",
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.19",
+    "prisma": "^4.1.1"
+  }
+}
