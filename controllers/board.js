@@ -16,9 +16,25 @@ export const getBoard = async (req, res) => {
 export const createComment = async (req, res) => {
   try {
     const boardId = req.params.boardId;
-    const { userId, comment } = req.body;
-    const boardComment = await services.createComment(boardId, userId, comment);
-    return res.status(200).json(boardComment);
+    const { userId, comment, parent_id } = req.body; //parent_id는 1부터 시작
+    const boardComment = await services.createComment(
+      boardId,
+      userId,
+      comment,
+      parent_id
+    );
+    return res.status(200).json({ message: 'success' });
+  } catch (err) {
+    res.status(err.statusCode || 500).json({ message: err.message });
+  }
+};
+
+export const updateBoardViews = async (req, res) => {
+  try {
+    const boardId = req.params.boardId;
+    const { userId } = req.body;
+    await services.updateBoardViews(boardId, userId);
+    return res.status(200).json({ message: 'success' });
   } catch (err) {
     res.status(err.statusCode || 500).json({ message: err.message });
   }
