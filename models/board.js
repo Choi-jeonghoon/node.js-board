@@ -5,7 +5,6 @@ import * as querybuilder from './querybuilders.js';
 // export const getBoard = async () => {
 //   return await prismaClient.boards.get({});
 // };
-
 export const getBoard = async keyword => {
   return await prismaClient.$queryRawUnsafe(`
   SELECT
