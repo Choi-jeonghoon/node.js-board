@@ -55,19 +55,22 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
   `;
   await prismaClient.$queryRawUnsafe(query);
 };
-export const getBoardViews = async boardId => {
-  return await prismaClient.$queryRaw`
-  SELECT 
-  board_views
-  FROM board
-  WHERE id = ${boardId};
+
+export const getUserById = async (boardId, userId) => {
+  const [existingUser] = await prismaClient.$queryRaw`
+  SELECT * FROM view WHERE board_id=${boardId} AND user_id= ${userId}
   `;
+  return existingUser;
 };
 
 export const updateBoardViews = async (boardId, userId) => {
-  let boardViews = (await getBoardViews(boardId))[0].board_views + 1;
-
   return await prismaClient.$queryRaw`
-  UPDATE board SET board_views = ${boardViews} WHERE id=${boardId};
+  INSERT INTO view (board_id,user_id) VALUES(${boardId},${userId})
+  `;
+};
+
+export const readView = async boardId => {
+  return await prismaClient.$queryRaw`
+  SELECT COUNT(*) AS cnt FROM view WHERE board_id=${boardId}
   `;
 };

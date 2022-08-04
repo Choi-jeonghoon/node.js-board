@@ -33,9 +33,10 @@ export const updateBoardViews = async (req, res) => {
   try {
     const boardId = req.params.boardId;
     const { userId } = req.body;
-    await services.updateBoardViews(boardId, userId);
-    return res.status(200).json({ message: 'success' });
+    const view = await services.updateBoardViews(boardId, userId);
+    console.log(view);
+    return res.status(200).json(view);
   } catch (err) {
-    res.status(err.statusCode || 500).json({ message: err.message });
+    res.status(err.statusCode || 500).json({ message: 'err.message ' });
   }
 };

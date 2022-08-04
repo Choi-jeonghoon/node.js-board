@@ -10,5 +10,12 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
 };
 
 export const updateBoardViews = async (boardId, userId) => {
-  return await models.updateBoardViews(boardId, userId);
+  const existingUser = await models.getUserById(boardId, userId);
+  if (existingUser) {
+    const view = Number((await models.readView(boardId))[0].cnt);
+    return view;
+  }
+  await models.updateBoardViews(boardId, userId);
+  const view = Number((await models.readView(boardId))[0].cnt);
+  return view;
 };

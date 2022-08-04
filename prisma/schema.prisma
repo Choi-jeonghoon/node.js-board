@@ -13,12 +13,12 @@ model board {
   category_id    Int?
   board_title    String?   @db.VarChar(255)
   board_contents String?   @db.VarChar(255)
-  board_views    Int?      @default(0)
   creatred_at    DateTime  @default(now()) @db.DateTime(0)
   updated_at     DateTime? @db.DateTime(0)
   category       category? @relation(fields: [category_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_board_category_id_category_id")
   user           user?     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_board_user_id_user_id")
   comment        comment[]
+  view           view[]
 
   @@index([category_id], map: "fk_board_category_id_category_id")
   @@index([user_id], map: "fk_board_user_id_user_id")
@@ -56,4 +56,16 @@ model user {
   updated_at DateTime? @db.DateTime(0)
   board      board[]
   comment    comment[]
+  view       view[]
+}
+
+model view {
+  id       Int    @id @default(autoincrement())
+  user_id  Int?
+  board_id Int?
+  board    board? @relation(fields: [board_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "view_ibfk_1")
+  user     user?  @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "view_ibfk_2")
+
+  @@index([board_id], map: "board_id")
+  @@index([user_id], map: "user_id")
 }
