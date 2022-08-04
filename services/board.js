@@ -1,8 +1,18 @@
 import * as models from '../models/board.js';
 
-export const getBoard = async keyword => {
-  const boardSearchResult = await models.getBoard(keyword);
+export const getBoard = async (boardId, pageNum) => {
+  const boardSearchResult = await models.getBoard(boardId, pageNum);
   return boardSearchResult;
+};
+
+export const getBoards = async keyword => {
+  const boardSearchResult = await models.getBoards(keyword);
+  return boardSearchResult;
+};
+
+export const readComment = async pageNum => {
+  const readCommentResult = await models.getComment(pageNum);
+  return readCommentResult;
 };
 
 export const createComment = async (boardId, userId, comment, parent_id) => {

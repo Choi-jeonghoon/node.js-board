@@ -5,7 +5,53 @@ import * as querybuilder from './querybuilders.js';
 // export const getBoard = async () => {
 //   return await prismaClient.boards.get({});
 // };
-export const getBoard = async keyword => {
+
+export const getBoard = async (boardId, pageNum) => {
+  const start = (pageNum - 1) * 5;
+
+  let end = Number(
+    (
+      await prismaClient.$queryRaw`SELECT COUNT(board_id) AS rowNum FROM comment WHERE board_id=${boardId}`
+    )[0].rowNum
+  );
+  return await prismaClient.$queryRawUnsafe(`
+  SELECT
+    b.id,
+    b.user_id,
+    user.nick_name,
+    b.board_title,
+    b.board_contents,
+    (
+      SELECT
+
+      JSON_ARRAYAGG(JSON_OBJECT("parent_id",cc.parent_id,"nick_name",uu.nick_name,"comment",cc.comment)) AS comt
+      
+      FROM (
+        SELECT
+        *
+        FROM comment
+        ORDER BY creatred_at ${start ? `LIMIT ${start}, 5` : `LIMIT 0,5`}
+        ) AS cc
+      LEFT JOIN user AS uu ON cc.user_id=uu.id
+      WHERE cc.board_id=${boardId}
+    ) AS board_comment
+  FROM board AS b
+  LEFT JOIN (
+    SELECT
+    *
+    FROM comment
+    ) AS c ON b.id = c.board_id
+
+  LEFT JOIN user AS u ON c.user_id = u.id
+  LEFT JOIN user ON b.user_id = user.id
+
+  WHERE b.id= ${boardId}
+
+  GROUP BY b.id
+  `);
+};
+
+export const getBoards = async keyword => {
   return await prismaClient.$queryRawUnsafe(`
   SELECT
     board.id,
@@ -34,11 +80,24 @@ export const getBoard = async keyword => {
   `);
 };
 
+export const getComment = async pageNum => {
+  const start = (pageNum - 1) * 5;
+  const query = `
+  SELECT *
+  FROM comment
+  ${start ? `LIMIT ${start},5` : `LIMIT 0 ,5`}`;
+  return query;
+  // return await prismaClient.$queryRawUnsafe
+};
+
 export const createComment = async (boardId, userId, comment, parent_id) => {
-  console.log('parent_id: ', parent_id);
-  let cdepth = 0;
+  let cdepth;
   if (parent_id !== null) {
-    cdepth = Number(parent_id) + 1;
+    let pdepth =
+      await prismaClient.$queryRaw`SELECT cdepth FROM comment WHERE id=${parent_id}`;
+    cdepth = Number(pdepth[0].cdepth) + 1;
+  } else {
+    cdepth = 0;
   }
   const query = `
     INSERT INTO comment (
