@@ -14,6 +14,7 @@ export const getBoard = async (boardId, pageNum) => {
       await prismaClient.$queryRaw`SELECT COUNT(board_id) AS rowNum FROM comment WHERE board_id=${boardId}`
     )[0].rowNum
   );
+  console.log(start, end);
   return await prismaClient.$queryRawUnsafe(`
   SELECT
     b.id,
@@ -30,7 +31,7 @@ export const getBoard = async (boardId, pageNum) => {
         SELECT
         *
         FROM comment
-        ORDER BY creatred_at ${start ? `LIMIT ${start}, 5` : `LIMIT 0,5`}
+        ORDER BY creatred_at ${start ? `LIMIT ${start}, ${end}` : `LIMIT 0,5`}
         ) AS cc
       LEFT JOIN user AS uu ON cc.user_id=uu.id
       WHERE cc.board_id=${boardId}
@@ -80,15 +81,15 @@ export const getBoards = async keyword => {
   `);
 };
 
-export const getComment = async pageNum => {
-  const start = (pageNum - 1) * 5;
-  const query = `
-  SELECT *
-  FROM comment
-  ${start ? `LIMIT ${start},5` : `LIMIT 0 ,5`}`;
-  return query;
-  // return await prismaClient.$queryRawUnsafe
-};
+// export const getComment = async pageNum => {
+//   const start = (pageNum - 1) * 5;
+//   const query = `
+//   SELECT *
+//   FROM comment
+//   ${start ? `LIMIT ${start},5` : `LIMIT 0 ,5`}`;
+//   return query;
+//   // return await prismaClient.$queryRawUnsafe
+// };
 
 export const createComment = async (boardId, userId, comment, parent_id) => {
   let cdepth;
