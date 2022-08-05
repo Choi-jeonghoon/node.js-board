@@ -8,13 +8,11 @@ import * as querybuilder from './querybuilders.js';
 
 export const getBoard = async (boardId, pageNum) => {
   const start = (pageNum - 1) * 5;
-
   let end = Number(
     (
       await prismaClient.$queryRaw`SELECT COUNT(board_id) AS rowNum FROM comment WHERE board_id=${boardId}`
     )[0].rowNum
   );
-  console.log(start, end);
   return await prismaClient.$queryRawUnsafe(`
   SELECT
     b.id,
@@ -96,9 +94,9 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
   if (parent_id !== undefined) {
     let pdepth =
       await prismaClient.$queryRaw`SELECT cdepth FROM comment WHERE id=${parent_id}`;
-    console.log(pdepth);
+
     cdepth = Number(pdepth[0].cdepth) + 1;
-    console.log(cdepth);
+
   } else {
     cdepth = 0;
   }

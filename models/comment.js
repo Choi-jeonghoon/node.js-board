@@ -1,5 +1,4 @@
 import prismaClient from './prisma-client.js';
-import * as querybuilder from './querybuilders.js';
 
 //ORM 작성시
 // export const getBoard = async () => {
@@ -21,9 +20,8 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
   if (parent_id !== undefined) {
     let pdepth =
       await prismaClient.$queryRaw`SELECT cdepth FROM comment WHERE id=${parent_id}`;
-    console.log(pdepth);
     cdepth = Number(pdepth[0].cdepth) + 1;
-    console.log(cdepth);
+
   } else {
     cdepth = 0;
   }
