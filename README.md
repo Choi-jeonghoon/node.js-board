@@ -1,39 +1,173 @@
-# JH_board
+# BoradAPI
 
-# 기업과제 설명 및 구현
-<aside>
-📝 아래 요구사항에 맞춰 게시판 Restful API를 개발합니다.
+## 사용 기술스택
 
-</aside>
+### JavaScript
 
-- 기업 선호 기술스택: python flask, mashmallow, mongoengine
-- 필수 사용 데이터베이스: mongodb
+### Express
 
----
+### mysqlDB
 
-- 대체 가능 기술 스택 : Express.js, typeorm
-- 대체 가능 데이터베이스 : mysql
+## 실행방법
 
-### **[필수 포함 사항]**
+### 1.해당 레포지토리를 clone합니다.
 
-- READ.ME 작성
-    - 프로젝트 빌드, 자세한 실행 방법 명시
-    - 구현 방법과 이유에 대한 간략한 설명
-- 프론트엔드 구현 대신 Swagger 이용하여 API 테스트 가능하도록 구현
+```shell
+git clone https://github.com/Choi-jeonghoon/JH_board
+```
 
-### [개발 요구사항]
 
-- 참고 : [wecommunity 게시판](https://community.wecode.co.kr/)
-- 게시글 카테고리가 있습니다.
+### 2. 다운 받으신 폴더로 들어갑니다
+
+```shell
+cd JH_board
+```
+
+### 3. 의존성들을 설치합니다.
+
+```shell
+npm i
+```
+
+### 4. Swagger 문서를 build합니다
+
+```shell
+npm run api-docs
+```
+
+### 5. 실행시킵니다!
+
+```shell
+npm start
+```
+
+## API 명세서
+
+```shell
+http://localhost:10010/api-docs/
+```
+
+에서 확인하실수 있습니다.
+
+<img width="1243" alt="스크린샷 2022-08-05 오후 4 34 12" src="https://user-images.githubusercontent.com/68211978/183027076-77d2740e-a4e1-4de9-9fb8-c4791f08ce1d.png">
+
+
+- Justcode 기업 과제 내용 포함
+ - 해당 프로젝트는 [링크]https://community.wecode.co.kr/ 의 프로젝트 기반으로 만들었습니다.
+ - 게시글 카테고리가 있습니다.
+ 
 - 게시글 검색 기능이 있습니다.
     - 게시글에서 특정 키워드를 검색하면, 게시글 제목, 게시글 본문, 게시글 댓글, 게시글 작성자 이름 에서 모두 검색하여, 해당 게시물을 표출합니다.
     - ex) `노드` 를 검색
+    
 - 대댓글(1 depth)
     - 댓글에는 대댓글을 달 수 있습니다.
     - 1 depth는 필수이지만, 2, 3중으로 대댓글을 계속해서 추가할 수 있다면 가산점이 있습니다.
     - 댓글/대댓글 pagination
+    
 - 게시글 읽힘 수
     - 같은 User가 게시글을 읽는 경우 count 수 증가하면 안 됩니다.
+    
 - Restful API 규칙에 따라 설계합니다.
 - Unit Test 를 추가합니다.
 - 1000만건 이상의 데이터를 넣고 성능테스트 진행 결과 필요합니다.
+
+
+# 기능 설명
+- 게시글 검색
+    - GET /boards API 를 사용해서 검색가능합니다.또한 keyWord는 자유작성이 가능합니다. 게시글 제목, 카테고리, 본문, 작성자 ,댓글 을 포함한 데이터는 모두 검색의 결과로서 나타납니다.
+    
+   - 아래는keyWodrd 부분의 쿼리입니다.
+```
+SELECT
+    board.id,
+    board.board_title AS boardTitle,
+    board.board_contents AS boardContent,
+    user.nick_name AS userName,
+    c.commentComment,
+    category.category
+
+  FROM board
+    LEFT JOIN user ON board.user_id=user.id
+    LEFT JOIN (
+      SELECT
+        comment.board_id,
+        JSON_ARRAYAGG(user.nick_name) AS userCommentNickname,
+        JSON_ARRAYAGG(comment.comment) AS commentComment
+
+      FROM comment
+        JOIN user on user.id=comment.user_id
+      GROUP BY comment.board_id    
+    ) AS c ON c.board_id = board.id
+
+  LEFT JOIN category ON category.id=board.category_id
+
+  WHERE ${querybuilder.searchFilter(keyword)}
+```
+- 대댓글(1 depth)
+    - 대댓글 pagination
+      - 기본 댓글은 0 depth, 대댓글은 1의 depth를 가지고있습니다. 대댓글의 페이지네이션은 GET /board/:id?page에서 확인하실수 있습니다.
+     
+     - 아래 코드는 대댓글 apgination 을 적용한 게시판을 조회했을 때 코드입니다.
+  ```    
+  const start = (pageNum - 1) * 5;
+
+  let end = Number(
+    (
+      await prismaClient.$queryRaw`SELECT COUNT(board_id) AS rowNum FROM comment WHERE board_id=${boardId}`
+    )[0].rowNum
+  );
+  console.log(start, end);
+  return await prismaClient.$queryRawUnsafe(`
+  SELECT
+    b.id,
+    b.user_id,
+    user.nick_name,
+    b.board_title,
+    b.board_contents,
+    (
+      SELECT
+
+      JSON_ARRAYAGG(JSON_OBJECT("parent_id",cc.parent_id,"nick_name",uu.nick_name,"comment",cc.comment)) AS comt
+      
+      FROM (
+        SELECT
+        *
+        FROM comment
+        ORDER BY creatred_at ${start ? `LIMIT ${start}, ${end}` : `LIMIT 0,5`}
+        ) AS cc
+      LEFT JOIN user AS uu ON cc.user_id=uu.id
+      WHERE cc.board_id=${boardId}
+    ) AS board_comment
+  FROM board AS b
+  LEFT JOIN (
+    SELECT
+    *
+    FROM comment
+    ) AS c ON b.id = c.board_id
+
+  LEFT JOIN user AS u ON c.user_id = u.id
+  LEFT JOIN user ON b.user_id = user.id
+
+  WHERE b.id= ${boardId}
+
+  GROUP BY b.id
+      
+ ```  
+ 
+구현된 기능
+- 게시글 검색 기능이 설계하였습니다.
+- 댓글에는 대댓글을 달 수 있도록 설계하였습니다.(2중 3중으로 대댓글을 추가할수있습니다.)
+- 같은 User가 게시글을 읽는 경우 count 수 증가되지 않도록 설계하였습니다.
+
+- Rest API 설계
+  - Rest API를 이용하여 설계하였습니다.
+  
+- Unit Test
+  - Unit Test는 진행하지 못했습니다.
+  
+- 1000만건 이상의 데이터를 넣고 성능테스트 진행 못했습니다.
+
+
+
+
