@@ -78,7 +78,7 @@ http://localhost:10010/api-docs/
     - GET /boards API 를 사용해서 검색가능합니다.또한 keyWord는 자유작성이 가능합니다. 게시글 제목, 카테고리, 본문, 작성자 ,댓글 을 포함한 데이터는 모두 검색의 결과로서 나타납니다.
     
    - 아래는keyWodrd 부분의 구현한 코드입니다.
-```
+``` javascript
 SELECT
     board.id,
     board.board_title AS boardTitle,
@@ -108,7 +108,7 @@ SELECT
 - 댓글 등록 
     - GET /comment/:boardId API 를 사용하여 게시글에 댓글이 등록하고 댓글에 댓글을 등록하는 것을 확인 할 수 있습니다.
     - 아래의 코드는 댓글에 대댓글을 등록할수 있도록 구현한 코드입니다.
-```
+```javascript
 export const createComment = async (boardId, userId, comment, parent_id) => {
   let cdepth;
   if (parent_id !== undefined) {
@@ -142,7 +142,7 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
     - 기본 댓글은 0 depth, 대댓글은 1의 depth를 가지고있습니다. 대댓글의 페이지네이션은 GET /board/:id?page에서 확인하실수 있습니다.
      
      - 아래 코드는 대댓글 apgination 을 적용한 게시판을 조회했을 때 코드입니다.
-  ```    
+  ```javascript  
   const start = (pageNum - 1) * 5;
 
   let end = Number(
@@ -192,7 +192,7 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
     - 같은 User가 게시글을 읽는 경우 count 수 증가되지 않도록 설계하였습니다.
     - 아래 코드는 user 가 게시글을 읽었을때는 1번 이후로는 조회수가 오르지 않게 하였습니다.
      
-```
+```javascript
     export const getUserById = async (boardId, userId) => {
   const [existingUser] = await prismaClient.$queryRaw`
   SELECT * FROM view WHERE board_id=${boardId} AND user_id= ${userId}
