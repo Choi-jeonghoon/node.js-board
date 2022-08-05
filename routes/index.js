@@ -7,74 +7,98 @@ router.use(boardRouter);
 
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
 
-//API 명세서
+// API 명세서
 /**
  * @swagger
  * paths:
- *  /board:
+ *  /boards:
  *    get:
  *      tags:
  *      - board
- *      description: 게시판 검색
+ *      description: 게시판 검색 조회
  *      produces:
  *      - application/json
  *      parameters:
  *        - in: query
  *          name: keyword
  *          required: false
- *          schema:
- *            type: integer
- *            description: 게시판
+ *          type: integer
+ *          description: 게시판
  *      responses:
  *       200:
- *        description: 게시판 검색
+ *        description: 검색 결과
  *
  *  /board/{id}:
- *    post:
+ *    get:
  *      tags:
  *      - board
- *      description: 게시판 댓글 등록
+ *      description: 게시판 조회
  *      produces:
  *      - application/json
  *      parameters:
  *        - in: path
  *          name: id
- *          required: ture
+ *          required: true
  *          type: integer
- *          description: 게시판 댓글 등록
+ *          description : "boardId"
  *
- *        - in: body
- *          name: createComment
- *          required: ture
- *          schema:
- *             $ref: "#/definitions/comment"
+ *        - in: query
+ *          name: page
+ *          required: true
+ *          type: integer
+ *          description : "댓글 pagination page number"
  *      responses:
  *       200:
- *        description: 게시판 검색
+ *        description: 검색 결과
+ *
  *    put:
  *      tags:
  *      - board
- *      description: 게시판 조회수
+ *      description: 조회수 조회
  *      produces:
  *      - application/json
  *      parameters:
  *        - in: path
  *          name: id
- *          required: ture
+ *          required: true
  *          type: integer
- *          description: 게시판 조회수
+ *          description : "boardId"
  *
  *        - in: body
- *          name: createComment
- *          required: ture
+ *          name: userId
+ *          required: true
+ *          type: integer
  *          properties:
- *            userId:
- *                type: integer
- *                description: user Id 가져오기
- *                example: 1
+ *              userId:
+ *                  type: integer
+ *                  example: 1
  *      responses:
  *       200:
- *        description: 게시판 조회수
+ *        description: 조회수
+ *
+ *  /comment/{id}:
+ *    post:
+ *      tags:
+ *      - comment
+ *      description: 댓글 등록
+ *      produces:
+ *      - application/json
+ *      parameters:
+ *        - in: path
+ *          name: id
+ *          required: true
+ *          type: integer
+ *          description : "boardId"
+ *
+ *        - in: body
+ *          name: createCommentDto
+ *          required: ture
+ *          schema:
+ *              $ref: "#/definitions/comment"
+ *      responses:
+ *       200:
+ *        description: 검색 결과
+ *
  * definitions:
  *  comment:
  *      type : object
@@ -89,12 +113,9 @@ router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
  *              type: string
  *              description: 코멘트 내용 입력
  *              example: "안녕"
- *          parent_id:
+ *          parentId:
  *               type: integer
- *               description: 대댓글일 때만 작성,첫번쨰 댓글일때만 삭제
+ *               description: 대댓글일때만 작성하고, 첫번째 댓글일 경우에는 삭제
  *               example: 1
- *
- *
- *
  */
 export default router;

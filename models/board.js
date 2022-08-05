@@ -93,10 +93,12 @@ export const getBoards = async keyword => {
 
 export const createComment = async (boardId, userId, comment, parent_id) => {
   let cdepth;
-  if (parent_id !== null) {
+  if (parent_id !== undefined) {
     let pdepth =
       await prismaClient.$queryRaw`SELECT cdepth FROM comment WHERE id=${parent_id}`;
+    console.log(pdepth);
     cdepth = Number(pdepth[0].cdepth) + 1;
+    console.log(cdepth);
   } else {
     cdepth = 0;
   }
