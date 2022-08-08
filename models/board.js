@@ -79,16 +79,6 @@ export const getBoards = async keyword => {
   `);
 };
 
-// export const getComment = async pageNum => {
-//   const start = (pageNum - 1) * 5;
-//   const query = `
-//   SELECT *
-//   FROM comment
-//   ${start ? `LIMIT ${start},5` : `LIMIT 0 ,5`}`;
-//   return query;
-//   // return await prismaClient.$queryRawUnsafe
-// };
-
 export const createComment = async (boardId, userId, comment, parent_id) => {
   let cdepth;
   if (parent_id !== undefined) {
@@ -96,7 +86,6 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
       await prismaClient.$queryRaw`SELECT cdepth FROM comment WHERE id=${parent_id}`;
 
     cdepth = Number(pdepth[0].cdepth) + 1;
-
   } else {
     cdepth = 0;
   }
@@ -134,3 +123,13 @@ export const readView = async boardId => {
   SELECT COUNT(*) AS cnt FROM view WHERE board_id=${boardId}
   `;
 };
+
+// export const getComment = async pageNum => {
+//   const start = (pageNum - 1) * 5;
+//   const query = `
+//   SELECT *
+//   FROM comment
+//   ${start ? `LIMIT ${start},5` : `LIMIT 0 ,5`}`;
+//   return query;
+//   // return await prismaClient.$queryRawUnsafe
+// };
