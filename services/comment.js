@@ -1,7 +1,7 @@
-import * as models from '../models/comment.js';
+import { commentModels } from '../models/index.js';
 
 export const createComment = async (boardId, userId, comment, parent_id) => {
-  return await models.createComment(boardId, userId, comment, parent_id);
+  return await commentModels.createComment(boardId, userId, comment, parent_id);
 };
 
 // export const readComment = async pageNum => {

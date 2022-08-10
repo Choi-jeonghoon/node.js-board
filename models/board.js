@@ -1,4 +1,4 @@
-import prismaClient from './prisma-client.js';
+import prismaClient from '../prisma/index.js';
 import * as querybuilder from './querybuilders.js';
 
 //ORM 작성시
@@ -6,7 +6,7 @@ import * as querybuilder from './querybuilders.js';
 //   return await prismaClient.boards.get({});
 // };
 
-export const getBoard = async (boardId, pageNum) => {
+export const getBoardWithComment = async (boardId, pageNum) => {
   const start = (pageNum - 1) * 5;
   let end = Number(
     (

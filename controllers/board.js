@@ -1,10 +1,13 @@
-import * as services from '../services/board.js';
+import { boardServices } from '../services/index.js';
 
-export const getBoard = async (req, res) => {
+export const getBoardWithComment = async (req, res) => {
   try {
     const boardId = req.params.boardId;
     const pageNum = req.query.page;
-    const boardSearchResult = await services.getBoard(boardId, pageNum);
+    const boardSearchResult = await boardServices.getBoardWithComment(
+      boardId,
+      pageNum
+    );
     return res.status(200).json(boardSearchResult);
   } catch (err) {
     res.status(err.statusCode || 500).json({ message: err.message });
@@ -14,7 +17,7 @@ export const getBoard = async (req, res) => {
 export const getBoards = async (req, res) => {
   try {
     const { keyword } = req.query;
-    const boardSearchResult = await services.getBoards(keyword);
+    const boardSearchResult = await boardServices.getBoards(keyword);
     if (boardSearchResult.count === 0 || keyword == '') {
       return res.sendStatus(204);
     }
@@ -23,17 +26,6 @@ export const getBoards = async (req, res) => {
     res.status(err.statusCode || 500).json({ message: err.message });
   }
 };
-
-// export const readComment = async (req, res) => {
-//   try {
-//     const pageNum = req.query.page;
-//     const readCommentResult = await services.readComment(pageNum);
-
-//     return res.status(200).json(readCommentResult);
-//   } catch (err) {
-//     res.status(err.statusCode || 500).json({ message: err.message });
-//   }
-// };
 
 export const createComment = async (req, res) => {
   try {
@@ -51,11 +43,11 @@ export const createComment = async (req, res) => {
   }
 };
 
-export const updateBoardViews = async (req, res) => {
+export const increaseView = async (req, res) => {
   try {
     const boardId = req.params.boardId;
     const { userId } = req.body;
-    const view = await services.updateBoardViews(boardId, userId);
+    const view = await services.increaseView(boardId, userId);
     return res.status(200).json(view);
   } catch (err) {
     res.status(err.statusCode || 500).json({ message: 'err.message ' });

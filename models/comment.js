@@ -1,4 +1,4 @@
-import prismaClient from './prisma-client.js';
+import prismaClient from '../prisma/index.js';
 
 //ORM 작성시
 // export const getBoard = async () => {

@@ -1,10 +1,10 @@
-import * as services from '../services/comment.js';
+import { commentServices } from '../services/index.js';
 
 export const createComment = async (req, res) => {
   try {
     const boardId = req.params.boardId;
     const { userId, comment, parent_id } = req.body; //parent_id는 1부터 시작
-    const boardComment = await services.createComment(
+    const boardComment = await commentServices.createComment(
       boardId,
       userId,
       comment,
@@ -19,7 +19,7 @@ export const createComment = async (req, res) => {
 // export const readComment = async (req, res) => {
 //   try {
 //     const pageNum = req.query.page;
-//     const readCommentResult = await services.readComment(pageNum);
+//     const readCommentResult = await commentservices.readComment(pageNum);
 
 //     return res.status(200).json(readCommentResult);
 //   } catch (err) {
