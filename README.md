@@ -70,6 +70,7 @@ http://localhost:10010/api-docs/
 # 기능 설명
 
 - 게시글 검색
+
   - GET /boards API 를 사용해서 검색가능합니다.또한 keyWord는 자유작성이 가능합니다. 게시글 제목, 카테고리, 본문, 작성자 ,댓글 을 포함한 데이터는 모두 검색의 결과로서 나타납니다.
 
   - 아래는 검색 부분의 구현한 코드입니다.
@@ -101,7 +102,7 @@ SELECT
   WHERE ${querybuilder.searchFilter(keyword)}
 ```
 
-   - 아래는keyWodrd 부분의 구현한 코드입니다.
+- 아래는keyWodrd 부분의 구현한 코드입니다.
 
 ```javascript
 export const searchFilter = keyword => {
