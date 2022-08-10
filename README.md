@@ -101,7 +101,7 @@ SELECT
   WHERE ${querybuilder.searchFilter(keyword)}
 ```
 
-    - 아래는keyWodrd 부분의 구현한 코드입니다.
+   - 아래는keyWodrd 부분의 구현한 코드입니다.
 
 ```javascript
 export const searchFilter = keyword => {
