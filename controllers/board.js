@@ -2,15 +2,17 @@ import { boardServices } from '../services/index.js';
 
 export const getBoardWithComment = async (req, res) => {
   try {
-    const boardId = req.params.boardId;
-    const pageNum = req.query.page;
-    const boardSearchResult = await boardServices.getBoardWithComment(
+    const boardId = req.params.id;
+    const commentOffset = req.query.offset;
+    const commentLimit = req.query.limit;
+    const readBoard = await boardServices.getBoardWithComment(
       boardId,
-      pageNum
+      commentOffset,
+      commentLimit
     );
-    return res.status(200).json(boardSearchResult);
-  } catch (err) {
-    res.status(err.statusCode || 500).json({ message: err.message });
+    return res.status(200).json(readBoard);
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({ message: error.message });
   }
 };
 

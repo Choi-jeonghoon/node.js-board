@@ -5,14 +5,21 @@ import * as querybuilder from './querybuilders.js';
 // export const getBoard = async () => {
 //   return await prismaClient.boards.get({});
 // };
+export const getBoardByBoardId = async boardId => {
+  const [existingBoard] = await prisma.$queryRaw`
+    SELECT * FROM board
+    WHERE id=${boardId}
+  `;
+  return existingBoard;
+};
 
-export const getBoardWithComment = async (boardId, pageNum) => {
-  const start = (pageNum - 1) * 5;
-  let end = Number(
-    (
-      await prismaClient.$queryRaw`SELECT COUNT(board_id) AS rowNum FROM comment WHERE board_id=${boardId}`
-    )[0].rowNum
-  );
+export const getBoardWithComment = async (
+  boardId,
+  commentOffset,
+  commentLimit
+) => {
+  const start = (commentOffset - 1) * commentLimit;
+
   return await prismaClient.$queryRawUnsafe(`
   SELECT
     b.id,
@@ -29,7 +36,10 @@ export const getBoardWithComment = async (boardId, pageNum) => {
         SELECT
         *
         FROM comment
-        ORDER BY creatred_at ${start ? `LIMIT ${start}, ${end}` : `LIMIT 0,5`}
+        ORDER BY creatred_at  
+        ${
+          start ? `LIMIT ${start}, ${commentLimit}` : `LIMIT 0, ${commentLimit}`
+        }
         ) AS cc
       LEFT JOIN user AS uu ON cc.user_id=uu.id
       WHERE cc.board_id=${boardId}
@@ -77,32 +87,6 @@ export const getBoards = async keyword => {
 
   WHERE ${querybuilder.searchFilter(keyword)}
   `);
-};
-
-export const createComment = async (boardId, userId, comment, parent_id) => {
-  let cdepth;
-  if (parent_id !== undefined) {
-    let pdepth =
-      await prismaClient.$queryRaw`SELECT cdepth FROM comment WHERE id=${parent_id}`;
-
-    cdepth = Number(pdepth[0].cdepth) + 1;
-  } else {
-    cdepth = 0;
-  }
-  const query = `
-    INSERT INTO comment (
-      board_id,
-      user_id,
-      comment
-      ${parent_id ? `, parent_id, cdepth` : ``}) 
-      VALUES (
-        ${boardId},
-        ${userId},
-        "${comment}"
-        ${parent_id ? `, ${parent_id}, ${cdepth}` : ``}
-    );
-  `;
-  await prismaClient.$queryRawUnsafe(query);
 };
 
 export const getUserById = async (boardId, userId) => {
