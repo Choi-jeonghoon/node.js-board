@@ -2,7 +2,7 @@ import { boardServices } from '../services/index.js';
 
 export const getBoardWithComment = async (req, res) => {
   try {
-    const boardId = req.params.id;
+    const boardId = req.params.boardId;
     const commentOffset = req.query.offset;
     const commentLimit = req.query.limit;
     const readBoard = await boardServices.getBoardWithComment(
@@ -33,7 +33,8 @@ export const increaseView = async (req, res) => {
   try {
     const boardId = req.params.boardId;
     const { userId } = req.body;
-    const view = await services.increaseView(boardId, userId);
+    console.log(boardId, userId, 'asdasd');
+    const view = await boardServices.increaseView(boardId, userId);
     return res.status(200).json(view);
   } catch (err) {
     res.status(err.statusCode || 500).json({ message: 'err.message ' });

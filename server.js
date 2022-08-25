@@ -15,7 +15,7 @@ app.use(cors(corsOption));
 app.use(express.json());
 app.use(routers);
 
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 10010;
 server.listen(PORT, () => {
   console.log(`server start : http://localhost:${PORT}/`);
 });

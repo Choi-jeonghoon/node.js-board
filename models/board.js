@@ -6,7 +6,7 @@ import * as querybuilder from './querybuilders.js';
 //   return await prismaClient.boards.get({});
 // };
 export const getBoardByBoardId = async boardId => {
-  const [existingBoard] = await prisma.$queryRaw`
+  const [existingBoard] = await prismaClient.$queryRaw`
     SELECT * FROM board
     WHERE id=${boardId}
   `;

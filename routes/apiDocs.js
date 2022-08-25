@@ -36,7 +36,13 @@
  *          description : "boardId"
  *
  *        - in: query
- *          name: page
+ *          name: offset
+ *          required: true
+ *          type: integer
+ *          description : "댓글 pagination page number"
+ *
+ *        - in: query
+ *          name: limit
  *          required: true
  *          type: integer
  *          description : "댓글 pagination page number"

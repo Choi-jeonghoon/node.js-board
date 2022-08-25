@@ -33,12 +33,14 @@ export const getBoards = async keyword => {
   return boardSearchResult;
 };
 
-export const updateBoardViews = async (boardId, userId) => {
+export const increaseView = async (boardId, userId) => {
+  console.log(boardId, userId, 'asdasd');
   const existingUser = await boardModels.getUserById(boardId, userId);
   if (existingUser) {
     const view = Number((await boardModels.readView(boardId))[0].cnt);
     return view;
   }
+
   await boardModels.updateBoardViews(boardId, userId);
   const view = Number((await boardModels.readView(boardId))[0].cnt);
   return view;
