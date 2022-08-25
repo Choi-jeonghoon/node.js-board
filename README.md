@@ -19,7 +19,7 @@ git clone https://github.com/Choi-jeonghoon/JH_board
 ### 2. 다운 받으신 폴더로 들어갑니다
 
 ```shell
-cd JH_board
+cd node.js-board
 ```
 
 ### 3. 의존성들을 설치합니다.
