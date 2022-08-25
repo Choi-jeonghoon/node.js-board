@@ -34,7 +34,6 @@ export const getBoards = async keyword => {
 };
 
 export const increaseView = async (boardId, userId) => {
-  console.log(boardId, userId, 'asdasd');
   const existingUser = await boardModels.getUserById(boardId, userId);
   if (existingUser) {
     const view = Number((await boardModels.readView(boardId))[0].cnt);

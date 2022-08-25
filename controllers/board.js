@@ -33,7 +33,6 @@ export const increaseView = async (req, res) => {
   try {
     const boardId = req.params.boardId;
     const { userId } = req.body;
-    console.log(boardId, userId, 'asdasd');
     const view = await boardServices.increaseView(boardId, userId);
     return res.status(200).json(view);
   } catch (err) {
