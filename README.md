@@ -157,13 +157,8 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
   - 아래 코드는 대댓글 apgination 을 적용한 게시판을 조회했을 때 코드입니다.
 
   ```javascript
-  const start = (pageNum - 1) * 5;
+   const start = (commentOffset - 1) * commentLimit;
 
-  let end = Number(
-    (
-      await prismaClient.$queryRaw`SELECT COUNT(board_id) AS rowNum FROM comment WHERE board_id=${boardId}`
-    )[0].rowNum
-  );
   return await prismaClient.$queryRawUnsafe(`
   SELECT
     b.id,
@@ -175,12 +170,15 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
       SELECT
 
       JSON_ARRAYAGG(JSON_OBJECT("parent_id",cc.parent_id,"nick_name",uu.nick_name,"comment",cc.comment)) AS comt
-
+      
       FROM (
         SELECT
         *
         FROM comment
-        ORDER BY creatred_at ${start ? `LIMIT ${start}, ${end}` : `LIMIT 0,5`}
+        ORDER BY creatred_at  
+        ${
+          start ? `LIMIT ${start}, ${commentLimit}` : `LIMIT 0, ${commentLimit}`
+        }
         ) AS cc
       LEFT JOIN user AS uu ON cc.user_id=uu.id
       WHERE cc.board_id=${boardId}
@@ -198,6 +196,7 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
   WHERE b.id= ${boardId}
 
   GROUP BY b.id
+  
 
   ```
 
