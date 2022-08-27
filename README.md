@@ -152,7 +152,7 @@ export const createComment = async (boardId, userId, comment, parent_id) => {
 - 대댓글(1 depth)
 
   - 대댓글 pagination
-  - 기본 댓글은 0 depth, 대댓글은 1의 depth를 가지고있습니다. 대댓글의 페이지네이션은 GET /board/:id?page에서 확인하실수 있습니다.
+  - 기본 댓글은 0 depth, 대댓글은 1의 depth를 가지고있습니다. 대댓글의 페이지네이션은 GET /board/id?offset=1&limit=5에서 확인하실수 있습니다.
 
   - 아래 코드는 대댓글 apgination 을 적용한 게시판을 조회했을 때 코드입니다.
 
